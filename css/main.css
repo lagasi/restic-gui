@@ -1,0 +1,36 @@
+.scrollable {
+  overflow-y: auto;
+}
+
+.fullscreen {
+  display: grid;
+  padding: 5px;
+  height: 100vh;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 168px 53px auto;
+  grid-column-gap: 5px;
+  grid-template-areas:
+    "top top"
+    "title-left title-right"
+    "data-left data-right";
+}
+
+.top {
+  grid-area: top;
+}
+.title-left {
+  grid-area: title-left;
+}
+.title-right {
+  grid-area: title-right;
+}
+.data-left {
+  grid-area: data-left;
+  align-content: stretch;
+  margin: 5px;
+}
+.data-right {
+  grid-area: data-right;
+  align-content: stretch;
+  margin: 5px;
+}
