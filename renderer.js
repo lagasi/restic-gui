@@ -243,7 +243,7 @@ function restore(name) {
   if (path) {
     loading.remove("is-invisible")
 
-    let cmd = `restic -r ${repo} restore ${stack[0].name} --target ${path} --include ${restoreItem}`
+    let cmd = `restic -r "${repo}" restore ${stack[0].name} --target "${path}" --include "${restoreItem}"`
     console.log(cmd)
     exec(cmd, (err, stdout, stderr) => {
       loading.add("is-invisible")
