@@ -1,9 +1,12 @@
+/*global __static*/
+
 const { exec } = require("child_process")
 const { dialog, shell } = require("electron").remote
 const fs = require("fs")
+const path = require("path")
 const { format } = require("date-fns")
-const Store = require("./store")
-const util = require("./util")
+const Store = require("../common/store")
+const util = require("../common/util")
 
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
@@ -23,36 +26,46 @@ var stack = []
 var cache = {}
 var curPath = ""
 
-const loading = document.getElementById("Loading").classList
+const styles = document.createElement("style")
+fs.readFile(path.join(__static, "bulma.min.css"), (err, bulma) => {
+  if (err) console.error(err)
 
+  fs.readFile(path.join(__static, "main.css"), (err, main) => {
+    if (err) console.error(err)
+
+    styles.innerText = bulma + main
+    document.head.appendChild(styles)
+  })
+})
+
+var loadingClassList
 var repo = store.get("repo")
 if (repo == null) repo = ""
-
 var password = ""
-document.configForm.repo.value = repo
 
-document.getElementById("loadBtn").addEventListener("click", function (e) {
-  //console.log("loading")
+fs.readFile(path.join(__static, "index.html"), (err, data) => {
+  if (err) console.error(err)
 
-  repo =  document.configForm.repo.value
-  password =  document.configForm.password.value
+  document.getElementById("app").innerHTML = data
+  loadingClassList = document.getElementById("Loading").classList
 
-  store.set("repo", repo)
+  var password = ""
+  document.configForm.repo.value = repo
 
-  //console.log(repo, password)
+  document.getElementById("loadBtn").addEventListener("click", function (e) {
+    repo =  document.configForm.repo.value
+    password =  document.configForm.password.value
+    store.set("repo", repo)
 
-  fs.exists(repo, function (exists) {
-    //console.log("exists", exists)
-    if (exists)  {
+    fs.access(repo, fs.constants.R_OK, function (err) {
+      if (err) dialog.showErrorBox("Error", "Directory does not exist.")
+
       if (password.length > 0)
         getSnapshots(repo, password)
       else {
         dialog.showErrorBox("Error", "Password required.")
       }
-    }
-    else {
-      dialog.showErrorBox("Error", "Directory does not exist.")
-    }
+    })
   })
 })
 
@@ -60,11 +73,11 @@ function getSnapshots(repo, password) {
 
   process.env.RESTIC_PASSWORD = password
 
-  loading.remove("is-invisible")
+  loadingClassList.remove("is-invisible")
 
   exec(`restic -r ${repo} snapshots --json`, opts, (err, stdout, stderr) => {
   //exec(`restic -r ${repo} --password-file ${passwordFile} snapshots --json`, (err, result) => {
-    loading.add("is-invisible")
+    loadingClassList.add("is-invisible")
 
     if (err) {
       dialog.showErrorBox("Error", err.message)
@@ -176,14 +189,14 @@ function loadTree(tree, name) {
     return
   }
 
-  loading.remove("is-invisible")
+  loadingClassList.remove("is-invisible")
   process.env.RESTIC_PASSWORD = password
 
   console.log("tree", tree)
 
   exec(`restic -r ${repo} cat blob ${tree} --json`, opts, (err, stdout, stderr) => {
   //exec(`restic -r ${repo} --password-file ${passwordFile} snapshots --json`, (err, result) => {
-    loading.add("is-invisible")
+    loadingClassList.add("is-invisible")
 
     if (err) {
       dialog.showErrorBox("Error", err.message)
@@ -210,7 +223,7 @@ function loadTree(tree, name) {
 function loadContent(content, filename) {
   console.log(content)
 
-  loading.remove("is-invisible")
+  loadingClassList.remove("is-invisible")
 
   let path = dialog.showSaveDialog({
     defaultPath: filename,
@@ -219,7 +232,7 @@ function loadContent(content, filename) {
 
     exec(`restic -r ${repo} cat blob ${content}`, { maxBuffer: 10*1024, encoding: "binary" }, (err, stdout, stderr) => {
     //exec(`restic -r ${repo} --password-file ${passwordFile} snapshots --json`, (err, result) => {
-      loading.add("is-invisible")
+      loadingClassList.add("is-invisible")
 
       if (err) {
         console.log(err)
@@ -242,12 +255,12 @@ function restore(name) {
     properties: ["openDirectory"],
   })[0]
   if (path) {
-    loading.remove("is-invisible")
+    loadingClassList.remove("is-invisible")
 
     let cmd = `restic -r "${repo}" restore ${stack[0].name} --target "${path}" --include "${restoreItem}"`
     console.log(cmd)
     exec(cmd, (err, stdout, stderr) => {
-      loading.add("is-invisible")
+      loadingClassList.add("is-invisible")
 
       if (err) {
         dialog.showErrorBox("Error", err.message)
