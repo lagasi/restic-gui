@@ -1,19 +1,34 @@
 {
   "name": "restic-gui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GUI for restoring/browsing snapshots from Restic",
-  "main": "main.js",
+  "author": "lagasi",
+  "license": "BSD-2-Clause",
   "scripts": {
-    "start": "electron ."
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
   },
   "keywords": [
     "Electron",
     "restic"
   ],
-  "author": "lagasi",
-  "license": "BSD-2-Clause",
+  "dependencies": {
+    "source-map-support": "^0.5.16"
+  },
   "devDependencies": {
     "date-fns": "^2.16.1",
-    "electron": "^10.1.5"
+    "electron": "8.2.0",
+    "electron-builder": "^22.4.1",
+    "electron-webpack": "^2.8.2",
+    "webpack": "~4.42.1"
+  },
+  "build": {
+    "appId": "com.v3computing.restic-gui",
+    "productName": "Restic GUI",
+    "win": {
+      "target": "portable"
+    }
   }
 }
