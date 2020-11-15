@@ -1,7 +1,7 @@
 const { exec } = require("child_process")
 const { dialog, shell } = require("electron").remote
 const fs = require("fs")
-const datefns = require("date-fns")
+const { format } = require("date-fns")
 const Store = require("./store")
 const util = require("./util")
 
@@ -13,6 +13,7 @@ const opts = {
   maxBuffer: 10000 * 1024,
 }
 const MAX = Infinity
+const DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss"
 
 const store = new Store({
   name: "restic",
@@ -81,7 +82,7 @@ function getSnapshots(repo, password) {
       for (let i = 0; i < end; i++) {
         let x = data[i]
         let time = new Date(x.time)
-        let timeString = datefns.format(time, "YYYY-MM-DD hh:mm:ss")
+        let timeString = format(time, DATETIME_FORMAT)
         //console.log(x.tree)
         table += `<tr id="snap-${i}"><td><a class="snapshot" tree="${x.tree}" name="${x.short_id}">${x.short_id}</a></td><td>${timeString}</td><td>${x.paths.join(",")}</td></tr>`
       }
@@ -119,7 +120,7 @@ function parse(nodes) {
   for (let x of nodes) {
     let time = new Date(x.mtime)
 
-    let timeString = datefns.format(time, "YYYY-MM-DD hh:mm:ss")
+    let timeString = format(time, DATETIME_FORMAT)
 
     if (x.type === "dir")
       table += `<tr>
