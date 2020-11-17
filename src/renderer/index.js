@@ -49,7 +49,6 @@ fs.readFile(path.join(__static, "index.html"), (err, data) => {
   document.getElementById("app").innerHTML = data
   loadingClassList = document.getElementById("Loading").classList
 
-  var password = ""
   document.configForm.repo.value = repo
 
   document.getElementById("loadBtn").addEventListener("click", function (e) {
