@@ -57,7 +57,7 @@ fs.readFile(path.join(__static, "index.html"), (err, data) => {
     store.set("repo", repo)
 
     fs.access(repo, fs.constants.R_OK, function (err) {
-      if (err) dialog.showErrorBox("Error", "Directory does not exist.")
+      if (err) return dialog.showErrorBox("Error", "Directory does not exist.")
 
       if (password.length > 0)
         getSnapshots(repo, password)
@@ -81,8 +81,10 @@ function getSnapshots(repo, password) {
     if (err) {
       dialog.showErrorBox("Error", err.message)
       console.log(err)
+      return
     } else if (stderr) {
       dialog.showErrorBox("Error", stderr)
+      return
     } else {
       //console.log(stdout)
       let data = JSON.parse(stdout)
@@ -250,7 +252,7 @@ function loadContent(content, filename) {
 function restore(name) {
   let restoreItem = curPath + "/" + name
 
-  let path = dialog.showOpenDialog({
+  let path = dialog.showOpenDialogSync({
     properties: ["openDirectory"],
   })[0]
   if (path) {
@@ -266,7 +268,7 @@ function restore(name) {
       } else if (stderr) {
         dialog.showErrorBox("Error", stderr)
       } else {
-        shell.openItem(path)
+        shell.openPath(path)
       }
     })
   }
