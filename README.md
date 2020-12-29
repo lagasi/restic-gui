@@ -8,6 +8,9 @@ At this moment, it can only view and restore from snapshots.
 ### Development Scripts
 
 ```bash
+# install dependencies
+yarn install
+
 # run application in development mode
 yarn dev
 
