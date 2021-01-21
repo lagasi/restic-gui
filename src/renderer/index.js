@@ -56,15 +56,11 @@ fs.readFile(path.join(__static, "index.html"), (err, data) => {
     password =  document.configForm.password.value
     store.set("repo", repo)
 
-    fs.access(repo, fs.constants.R_OK, function (err) {
-      if (err) return dialog.showErrorBox("Error", "Directory does not exist.")
-
-      if (password.length > 0)
-        getSnapshots(repo, password)
-      else {
-        dialog.showErrorBox("Error", "Password required.")
-      }
-    })
+    if (password.length > 0)
+      getSnapshots(repo, password)
+    else {
+      dialog.showErrorBox("Error", "Password required.")
+    }
   })
 })
 
