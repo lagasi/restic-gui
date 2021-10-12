@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "date-fns": "^2.16.1",
-    "electron": "10.1.5",
+    "electron": "11.5.0",
     "electron-builder": "^22.9.1",
     "electron-webpack": "^2.8.2",
     "webpack": "~4.42.1"
