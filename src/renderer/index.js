@@ -39,34 +39,42 @@ fs.readFile(path.join(__static, "bulma.min.css"), (err, bulma) => {
 })
 
 var loadingClassList
-var repo = store.get("repo")
-if (repo == null) repo = ""
+var repo = store.get("repo") || ""
+var envVars = store.get("envVars")
 var password = ""
 
 fs.readFile(path.join(__static, "index.html"), (err, data) => {
   if (err) console.error(err)
 
   document.getElementById("app").innerHTML = data
-  loadingClassList = document.getElementById("Loading").classList
+  loadingClassList = document.getElementById("loading").classList
 
   document.configForm.repo.value = repo
 
   document.getElementById("loadBtn").addEventListener("click", function (e) {
     repo =  document.configForm.repo.value
     password =  document.configForm.password.value
+    envVars = document.configForm.env.value
     store.set("repo", repo)
 
     if (password.length > 0)
-      getSnapshots(repo, password)
+      getSnapshots(repo, password, envVars)
     else {
       dialog.showErrorBox("Error", "Password required.")
     }
   })
 })
 
-function getSnapshots(repo, password) {
-
+function getSnapshots(repo, password, envVars) {
   process.env.RESTIC_PASSWORD = password
+
+  const lines = envVars.split("\n")
+  for (const line of lines) {
+    const [name, val] = line.split("=")
+    if (name && val) {
+      process.env[name.trim()] = val.trim()
+    }
+  }
 
   loadingClassList.remove("is-invisible")
 

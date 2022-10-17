@@ -1,44 +1,51 @@
-.scrollable {
-  overflow-y: auto;
+html {
+  overflow-y: hidden;
 }
 
 .fullscreen {
   display: grid;
-  padding: 5px;
+  grid-template-rows: auto 1fr;
+  padding: 8px;
+  gap: 16px;
   height: 100vh;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 168px 53px auto;
-  grid-column-gap: 5px;
-  grid-template-areas:
-    "top top"
-    "title-left title-right"
-    "data-left data-right";
 }
 
-.top {
-  grid-area: top;
-}
-.title-left {
-  grid-area: title-left;
-}
-.title-right {
-  grid-area: title-right;
-}
-.data-left {
-  grid-area: data-left;
-  align-content: stretch;
-  margin: 5px;
-}
-.data-right {
-  grid-area: data-right;
-  align-content: stretch;
-  margin: 5px;
+.explorer {
+  display: flex;
+  gap: 8px;
+  height: calc(100vh - 228px);
 }
 
-#Loading {
+.snapshots, .files {
+  flex: 1 0 360px;
+  border: 1px solid #ddd;
+  overflow-y: auto;
+  height: 100%;
+  padding: 8px;
+}
+
+#loading {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 5px;
+}
+
+.form-fields {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.form-left {
+  flex: 1 0 360px
+}
+
+.form-right {
+  flex: 1 0 200px;
+}
+
+textarea {
+  width: 100%;
 }
